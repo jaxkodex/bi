@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+		xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta charset="UTF-8" />
+	<title><ui:insert name="title">Err</ui:insert> | SABSIS</title>
+	
+</h:head>
+
+<h:body>
+	<h:outputStylesheet library="css" name="main.css"></h:outputStylesheet>
+	<p:ajaxStatus style="width:64px;height:64px;position:fixed;left:50%;top:25px;z-index:1000">
+		<f:facet name="start">
+			<p:graphicImage value="/resources/img/ajax-loader.gif" />
+		</f:facet>
+		<f:facet name="complete">
+			<h:outputText value="" />
+		</f:facet>
+	</p:ajaxStatus>
+	<div id="header">
+		SABSIS
+		<h:form>
+			<h:outputText value="#{usuarioController.usuario.username}" />
+		</h:form>
+	</div>
+	<div id="content">
+		<div id="menu">
+		<h:form>
+			<p:menu>
+				<p:menuitem value="Inicio" outcome="/index.xhtml" />
+				<p:submenu label="Convenio">
+					<p:menuitem value="Inicio" outcome="/convenio/index.xhtml" />
+					<p:menuitem value="Carga Masiva" action="#{convenioController.initMasivo}" />
+				</p:submenu>
+				<p:submenu label="Mi cuenta">
+					<p:menuitem value="Datos personales" />
+				</p:submenu>
+				<p:submenu label="Administracion">
+					<p:menuitem value="Centros Asistenciales" outcome="/admin/centro/index.xhtml" />
+					<p:menuitem value="Redes Asistenciales" outcome="/admin/red/index.xhtml" />
+					<p:menuitem value="Cuentas de usuario" outcome="/admin/usuario/index.xhtml" />
+					<p:menuitem value="Salir" url="/usuario/logout.xhtml" />
+				</p:submenu>
+			</p:menu>
+		</h:form>
+		</div>
+		<div id="contenidos">
+			<ui:insert name="contenidos">Al parecer se nos olvido cambiar el contenido de esta pagina!</ui:insert>
+		</div>
+		<br style="clear: both;" />
+	</div>
+	<!-- div id="footer">EsSalud</div -->
+</h:body>
+
+</html>

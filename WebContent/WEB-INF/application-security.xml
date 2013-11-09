@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+    
+	<security:http auto-config="true" authentication-manager-ref="am" use-expressions="true">
+		<security:intercept-url pattern="/j_spring_security_check" access="permitAll"/>
+		<security:intercept-url pattern="/usuario/login.xhtml" access="permitAll" />
+		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		<security:intercept-url pattern="/javax.faces.resource/**" access="permitAll" />
+		<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+    	<security:form-login login-page="/usuario/login.xhtml" authentication-failure-url="/usuario/login.xhtml?error=true" />
+    	<security:logout logout-url="/usuario/logout.xhtml" />
+    </security:http>
+    	
+    <security:authentication-manager alias="am">
+    	<security:authentication-provider>
+    		<security:password-encoder hash="md5" />
+    		<!-- security:jdbc-user-service data-source-ref="usuarioDao"/ -->
+    		<security:user-service>
+    			<security:user name="super_admin" authorities="SUPER_ADMIN, ROLE_USER" password="fe01ce2a7fbac8fafaed7c982a04e229"/>
+    		</security:user-service>
+    	</security:authentication-provider>
+    </security:authentication-manager>
+    
+    
+</beans>

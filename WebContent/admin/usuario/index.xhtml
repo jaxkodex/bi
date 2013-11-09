@@ -1,0 +1,53 @@
+<ui:composition template="/WEB-INF/template/main.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+		xmlns:ui="http://java.sun.com/jsf/facelets">
+		
+	<ui:define name="title">Usuarios</ui:define>
+	
+	<ui:define name="contenidos">
+		<h:form>
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:commandButton icon="ui-icon-document" oncomplete="PF('newUserDialog').show()" />
+				</p:toolbarGroup>
+			</p:toolbar>
+		</h:form>
+		<br />
+		<h:form id="form_usuarios">
+			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+			<p:dataTable var="usuario" value="#{usuarioController.usuariosLazy}" paginator="true" rows="10" lazy="true">
+				<p:column headerText="Usuario">
+					<h:outputText value="#{usuario.username}" />
+				</p:column>
+				<p:column style="width: 10px;">
+					<p:commandButton icon="ui-icon-search" oncomplete="PF('updateUserDialog').show()" update=":form_usuarios:update_user_dialog">
+						<f:setPropertyActionListener target="#{usuarioController.selectedUser}" value="#{usuario}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			
+			<p:dialog header="Detalle de Usuario" widgetVar="updateUserDialog" modal="true" id="update_user_dialog">
+				<h:panelGrid columns="2">
+					<h:outputLabel>Username:</h:outputLabel>
+					<p:inputText id="update_username" value="#{usuarioController.selectedUser.username}" />
+					<h:outputLabel>Password:</h:outputLabel>
+					<p:password id="update_password" value="#{usuarioController.selectedUser.password}" />
+				</h:panelGrid>
+			</p:dialog>
+			
+			<p:dialog header="Nuevo Usuario" widgetVar="newUserDialog" modal="true">
+				<h:panelGrid columns="2">
+					<h:outputLabel>Username:</h:outputLabel>
+					<p:inputText id="new_username" value="#{usuarioController.newUser.username}" />
+					<h:outputLabel>Password:</h:outputLabel>
+					<p:password id="new_password" value="#{usuarioController.newUser.password}" />
+				</h:panelGrid>
+				<p:commandButton value="Registrar" actionListener="#{usuarioController.registerUser}" />
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
