@@ -11,7 +11,9 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import bi.colegios.bean.Cargo;
 import bi.colegios.bean.Ciclo;
+import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.InstitucionEducativa;
 import bi.colegios.bean.OfertaGrado;
 
@@ -41,6 +43,16 @@ public class InstitucionEducativaDao {
 		return ie;
 	}
 	
+	public Cargo loadCargoById (Integer idCargo) {
+		if (idCargo == null) return null;
+		Cargo cargo = null;
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		cargo = (Cargo) session.get(Cargo.class, idCargo);
+		session.getTransaction().commit();
+		return cargo;
+	}
+	
 	public boolean nuevaInstitucioneducativa (InstitucionEducativa ie) {
 		if (loadByCodigoModular(ie.getCodigoModular()) != null)
 			return false;
@@ -55,6 +67,17 @@ public class InstitucionEducativaDao {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		session.save(ofertaGrado);
+		session.getTransaction().commit();
+		return true;
+	}
+	
+	public boolean nuevoCargo (Cargo cargo) {
+		if (cargo == null || loadCargoById(cargo.getId()) != null) {
+			return false;
+		}
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		session.save(cargo);
 		session.getTransaction().commit();
 		return true;
 	}
@@ -77,6 +100,15 @@ public class InstitucionEducativaDao {
 		session.getTransaction().commit();
 		return ies;
 	}
+	
+	public List<Cargo> listAllCargo () {
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		List<Cargo> cargos = session.createCriteria(Cargo.class)
+				.list();
+		session.getTransaction().commit();
+		return cargos;
+	}
 
 	public List<InstitucionEducativa> search(String searchQuery) {
 		Session session = sessionFactory.getCurrentSession();
@@ -87,5 +119,13 @@ public class InstitucionEducativaDao {
 		List<InstitucionEducativa> ies = c.list();
 		session.getTransaction().commit();
 		return ies;
+	}
+
+	public boolean nuevoDesempenia(Desempenia desempenia) {
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		session.save(desempenia);
+		session.getTransaction().commit();
+		return true;
 	}
 }

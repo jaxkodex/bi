@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import bi.colegios.bean.Cargo;
 import bi.colegios.bean.InstitucionEducativa;
 import bi.colegios.dao.InstitucionEducativaDao;
 
@@ -19,6 +20,8 @@ public class InstitucionEducativaController {
 	private InstitucionEducativaDao institucionEducativaDao;
 	private String searchQuery;
 	private List<InstitucionEducativa> searchResults;
+	private List<Cargo> cargos;
+	private Cargo cargoNuevo;
 	
 	@Autowired
 	public InstitucionEducativaController (InstitucionEducativaDao institucionEducativaDao) {
@@ -27,6 +30,7 @@ public class InstitucionEducativaController {
 		this.institucionEducativaList = new ArrayList<InstitucionEducativa>();
 		this.searchQuery = "";
 		this.searchResults = new ArrayList<InstitucionEducativa>();
+		cargoNuevo = new Cargo();
 	}
 	
 	public void registrarInstitucionEducativa () {
@@ -38,6 +42,28 @@ public class InstitucionEducativaController {
 		searchResults = institucionEducativaDao.search(searchQuery);
 	}
 	
+	public void nuevoCargo () {
+		institucionEducativaDao.nuevoCargo(cargoNuevo);
+		cargoNuevo = new Cargo();
+	}
+	
+	public List<Cargo> getCargos() {
+		cargos = institucionEducativaDao.listAllCargo();
+		return cargos;
+	}
+
+	public void setCargos(List<Cargo> cargos) {
+		this.cargos = cargos;
+	}
+
+	public Cargo getCargoNuevo() {
+		return cargoNuevo;
+	}
+
+	public void setCargoNuevo(Cargo cargoNuevo) {
+		this.cargoNuevo = cargoNuevo;
+	}
+
 	public List<InstitucionEducativa> getSearchResults() {
 		return searchResults;
 	}

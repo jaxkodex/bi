@@ -1,0 +1,42 @@
+<ui:composition template="/WEB-INF/template/main.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+		xmlns:ui="http://java.sun.com/jsf/facelets">
+		
+	<ui:define name="title">Roles | Usuarios</ui:define>
+	
+	<ui:define name="contenidos">
+	<h:form id="roles">
+		<p:panel header="Nuevo rol">
+			<h:panelGrid columns="3">
+				<h:outputLabel for="rol_id" value="Codigo:" />
+				<p:inputText id="rol_id" value="#{rolController.rolNuevo.id}" maxlength="12" required="true">
+					<f:validateLength minimum="2" maximum="12" />
+				</p:inputText>
+				<p:message for="rol_id" />
+				
+				<h:outputLabel for="rol_desc" value="Descripcion:" />
+				<p:inputText id="rol_desc" value="#{rolController.rolNuevo.descripcion}" maxlength="45" required="true">
+					<f:validateLength minimum="2" maximum="45" />
+				</p:inputText>
+				<p:message for="rol_desc" />
+			</h:panelGrid>
+			<p:commandButton icon="ui-icon-plus" value="Agregar" 
+			update=":roles" 
+			action="#{rolController.registrarNuevoRol}" />
+		</p:panel>
+		<br />
+		<p:dataTable id="rol_list" var="rol" value="#{rolController.roles}">
+			<p:column headerText="CODIGO">
+				<h:outputText value="#{rol.id}" />
+			</p:column>
+			<p:column headerText="DESCRIPCION">
+				<h:outputText value="#{rol.descripcion}" />
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	</ui:define>
+</ui:composition>

@@ -14,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +42,7 @@ public class Usuario implements UserDetails {
 	}, inverseJoinColumns = {
 			@JoinColumn(name="id_rol")
 	})
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Rol> roles;
 	
 	public Usuario() {
