@@ -1,13 +1,20 @@
 package bi.colegios.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @ManagedBean
 @Entity
@@ -21,6 +28,12 @@ public class Persona implements Serializable {
 	@GeneratedValue
 	@Column(name="id_persona")
 	private Integer id;
+	@OneToMany(mappedBy="persona")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	List<Desempenia> desempeniaList;
+	@ManyToOne
+	@JoinColumn(name="id_ie")
+	private InstitucionEducativa institucionEducativa;
 	@Column(name="per_dni")
 	private String dni;
 	@Column(name="per_nombres")
@@ -46,6 +59,22 @@ public class Persona implements Serializable {
 		this.genero = persona.getGenero();
 	}
 	
+	public InstitucionEducativa getInstitucionEducativa() {
+		return institucionEducativa;
+	}
+
+	public void setInstitucionEducativa(InstitucionEducativa institucionEducativa) {
+		this.institucionEducativa = institucionEducativa;
+	}
+
+	public List<Desempenia> getDesempeniaList() {
+		return desempeniaList;
+	}
+
+	public void setDesempeniaList(List<Desempenia> desempeniaList) {
+		this.desempeniaList = desempeniaList;
+	}
+
 	public Integer getId() {
 		return id;
 	}

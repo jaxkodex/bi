@@ -1,6 +1,7 @@
 package bi.colegios.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.primefaces.model.UploadedFile;
 import org.springframework.stereotype.Controller;
 
 import bi.colegios.bean.Calificacion;
+import bi.colegios.data.parser.CalificacionPrimaria;
 import bi.colegios.data.parser.UploadDataParser;
 
 @Controller
@@ -21,6 +23,7 @@ public class CargaController {
 	private Map<String, String> nivelList;
 	private Map<String, Map<String, String>> ofertaGradoList;
 	private Map<String, Map<String, String>> areaList;
+	private List<Calificacion> calificacionesPorArea;
 	
 	String nivelSeleccionado;
 	String gradoSeleccionado;
@@ -30,6 +33,13 @@ public class CargaController {
 	Map<String, String> areasParaGradoSeleccionado;
 	
 	List<Calificacion> calificacionesSeleccionadas;
+	
+	List<String> columnas;
+	List<String[]> columnaData;
+	Map<String, String> periodosCalificacion;
+	Map<String, String> consideracionCalificacion;
+	Map<String, String> estudiantes;
+	Map<String, Map<String, Map<String, Float>>> calificacionesHolder;
 	
 	public CargaController () {
 		calificaciones = new HashMap<>();
@@ -86,12 +96,138 @@ public class CargaController {
 	}
 	
 	public void onGradoChangeHandler () {
-		System.out.println("SE CARGAN LOS DATOS PARA EL GRADO: " + gradoSeleccionado);
 		if (gradoSeleccionado != null && !gradoSeleccionado.equals("")) {
 			areasParaGradoSeleccionado = areaList.get(gradoSeleccionado);
 		} else {
 			areasParaGradoSeleccionado = new HashMap<>();
 		}
+	}
+	
+	public void onAreaChangeHandler () {
+		if (areaSeleccionada != null && !areaSeleccionada.equals("")) {
+			String areaKey = areaSeleccionada.replace(" ", "_");
+			String nivel = areaKey.split("_")[0];
+			calificacionesPorArea = calificaciones.get(areaKey);
+			
+			// Cargar los datos para el modelo de
+			//- la tabla que se va a dibujar
+			periodosCalificacion = new HashMap<>();
+			estudiantes = new HashMap<>();
+			consideracionCalificacion = new HashMap<>();
+			calificacionesHolder = new HashMap<>();
+			columnas = new ArrayList<>();
+			columnaData = new ArrayList<>();
+			
+			int count = 1;
+			for (Calificacion calificacion : calificacionesPorArea) {
+				periodosCalificacion.put(calificacion.getPeriodoCalifica().getId(), 
+						calificacion.getPeriodoCalifica().getId());
+				estudiantes.put(calificacion.getMatricula().getEstudiante().getCodigo(), 
+						calificacion.getMatricula().getEstudiante().getPersona().getNombres()
+						+", "+calificacion.getMatricula().getEstudiante().getPersona().getApellidos());
+				consideracionCalificacion.put(calificacion.getConsideracion().getId(), 
+						calificacion.getConsideracion().getId());
+				Map<String, Map<String, Float>> record = calificacionesHolder.get(
+						calificacion.getMatricula().getEstudiante().getCodigo());
+				if (record == null) {
+					record = new HashMap<>();
+				}
+				Map<String, Float> nota = record.get(calificacion.getPeriodoCalifica().getId());
+				if (nota == null) {
+					nota = new HashMap<>();
+				}
+				nota.put(calificacion.getConsideracion().getId(), calificacion.getValor());
+				record.put(calificacion.getPeriodoCalifica().getId(), nota);
+				calificacionesHolder.put(calificacion.getMatricula().getEstudiante().getCodigo(), record);
+				count++;
+			}
+			columnas = new ArrayList<>();
+			columnas.add("N.");
+			columnas.add("ESTUDIANTE");
+			for (String keyPeriodo : periodosCalificacion.keySet()) {
+				for (String keyConsideracion : consideracionCalificacion.keySet()) {
+					columnas.add(keyConsideracion);
+				}
+			}
+			
+			int studentCount = 1;
+			for (String keyReporteNotas : calificacionesHolder.keySet()) {
+				ArrayList<String> data = new ArrayList<String>();
+				data.add(studentCount+"");
+				data.add(estudiantes.get(keyReporteNotas));
+				Map<String, Map<String, Float>> record = calificacionesHolder.get(keyReporteNotas);
+				for (String keyPeriodo : periodosCalificacion.keySet()) {
+					Map<String, Float> nota = record.get(keyPeriodo);
+					for (String keyConsideracion : consideracionCalificacion.keySet()) {
+						if (nivel.equals("PRIMARIA")) {
+							switch (nota.get(keyConsideracion).intValue()) {
+							case 2:
+								data.add("A");
+								break;
+							case 1:
+								data.add("B");
+								break;
+							case 0:
+								data.add("C");
+								break;
+							default:
+								data.add("-");
+								break;
+							}
+						} else {
+							data.add(String.format("%.2f", nota.get(keyConsideracion)));
+						}
+					}
+				}
+				String[] d = new String[data.size()];
+				for (int i = 0; i < data.size(); i++) {
+					d[i] = data.get(i);
+				}
+				columnaData.add(d);
+				studentCount++;
+			}
+
+			System.out.format("%-3s", columnas.get(0));
+			System.out.format("%-45s", columnas.get(1));
+			for (int i=2; i < columnas.size(); i++) {
+				System.out.format("%-5s", columnas.get(i));
+			}
+			System.out.println();
+
+			for (String[] data : columnaData) {
+				System.out.format("%-3s%-45s", data[0], (data[1].length() > 45 ? data[1].substring(0, 45) : data[1]));
+				for (int i = 2; i < data.length; i++) {
+					System.out.format("%-5s", data[i]);
+				}
+				System.out.println();
+			}
+		} else {
+			calificacionesPorArea = new ArrayList<>();
+		}
+	}
+
+	public List<String> getColumnas() {
+		return columnas;
+	}
+
+	public void setColumnas(List<String> columnas) {
+		this.columnas = columnas;
+	}
+
+	public List<String[]> getColumnaData() {
+		return columnaData;
+	}
+
+	public void setColumnaData(List<String[]> columnaData) {
+		this.columnaData = columnaData;
+	}
+
+	public List<Calificacion> getCalificacionesPorArea() {
+		return calificacionesPorArea;
+	}
+
+	public void setCalificacionesPorArea(List<Calificacion> calificacionesPorArea) {
+		this.calificacionesPorArea = calificacionesPorArea;
 	}
 
 	public UploadedFile getFile() {

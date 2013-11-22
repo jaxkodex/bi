@@ -92,12 +92,14 @@ public class UploadDataParser {
 		System.out.println("Archivo: " + complete_name);
 		System.out.println(filename);
 		//System.out.println("NIVEL: "+parametros[0]+" GRADO: "+parametros[1]+" SECCION: "+parametros[2]);
+		/*
 		System.out.format("NIVEL: %s GRADO: %s SECCION: %s AREA: %s\n", 
 				parametros[0], 
 				parametros[1], 
 				parametros[2], 
 				parametros[3]);
 		System.out.println("-------------------------------------------------------");
+		*/
 		nivel = parametros[0];
 		grado = parametros[1];
 		seccion = parametros[2];

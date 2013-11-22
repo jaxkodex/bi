@@ -37,12 +37,26 @@
 				</p:selectOneMenu>
 				
 				<h:outputText value="Area:" />
-				<p:selectOneMenu id="area">
+				<p:selectOneMenu id="area" value="#{cargaController.areaSeleccionada}">
 					<f:selectItem itemLabel="Seleccione" itemValue="" />
 					<f:selectItems value="#{cargaController.areasParaGradoSeleccionado}" />
+					<p:ajax update="calificaciones" listener="#{cargaController.onAreaChangeHandler}" />
 				</p:selectOneMenu>
 			</h:panelGrid>
 			
+			<p:panel id="calificaciones" header="Calificaciones cargadas">
+				<p:dataTable id="calificacionesTable" var="notas" value="#{cargaController.columnaData}">
+					<p:columns var="col" value="#{cargaController.columnas}"
+					columnIndexVar="i">
+						<f:facet name="header">
+							<p:outputPanel>
+								#{col}
+							</p:outputPanel>
+						</f:facet>
+						<h:outputText value="#{notas[i]}" />
+					</p:columns>
+				</p:dataTable>
+			</p:panel>
 		</h:form>
 	</ui:define>
 </ui:composition>
