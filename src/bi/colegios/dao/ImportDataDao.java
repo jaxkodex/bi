@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ public class ImportDataDao {
 	private InstitucionEducativa institucionEducativa;
 	private PeriodoAcademico periodoAcademico;
 	private Dcn dcn;
-	private List<Calificacion> calificaciones;
+	private Map<String, List<Calificacion>> calificaciones;
 	
 	private Map<String, Map<String, Map<String, List<Map<String, String>>>>> estructura;
 			//  NIVEL,      GRADO,      AREA,   CONSIDERACIONES=[(ID, DESC)]
@@ -37,14 +38,24 @@ public class ImportDataDao {
 	private Map<String, Nivel> niveles;
 	private Map<String, Grado> grados;
 	
-	public void registrarAll (List<Calificacion> calificaciones, 
+	public void registrarAll (Map<String, List<Calificacion>> calificaciones, 
 			PeriodoAcademico periodoAcademico,
 			InstitucionEducativa institucionEducativa,
 			Dcn dcn) {
 		this.calificaciones = calificaciones;
+		/*
+		for (Calificacion calificacion : this.calificaciones) {
+			guardaCalificacion(calificacion);
+		}
+		*/
 	}
 	
-	private void loadEstructura () {
-		
+	private void guardaCalificacion (Calificacion calificacion) {
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		session.saveOrUpdate(calificacion.getConsideracion().getArea().getGrado().getNivel());
+		session.saveOrUpdate(calificacion.getConsideracion().getArea().getGrado());
+		session.saveOrUpdate(calificacion.getConsideracion().getArea());
+		session.getTransaction().commit();
 	}
 }

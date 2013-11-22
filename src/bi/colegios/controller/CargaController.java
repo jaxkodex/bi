@@ -9,9 +9,14 @@ import java.util.Map;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.UploadedFile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import bi.colegios.bean.Calificacion;
+import bi.colegios.bean.Dcn;
+import bi.colegios.bean.InstitucionEducativa;
+import bi.colegios.bean.PeriodoAcademico;
+import bi.colegios.dao.ImportDataDao;
 import bi.colegios.data.parser.UploadDataParser;
 
 @Controller
@@ -41,11 +46,16 @@ public class CargaController {
 	Map<String, String> estudiantes;
 	Map<String, Map<String, Map<String, Float>>> calificacionesHolder;
 	
-	public CargaController () {
+	ImportDataDao importDataDao;
+	
+	@Autowired
+	public CargaController (ImportDataDao importDataDao) {
 		calificaciones = new HashMap<>();
 		nivelList = new HashMap<>();
 		ofertaGradoList = new HashMap<>();
 		areaList = new HashMap<>();
+		
+		this.importDataDao = importDataDao;
 	}
 	
 	public void carga () {
@@ -59,6 +69,15 @@ public class CargaController {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void save () {
+		PeriodoAcademico periodoAcademico = new PeriodoAcademico();
+		periodoAcademico.setId(2013);
+		periodoAcademico.setDescripcion("2013");
+		InstitucionEducativa ie = new InstitucionEducativa();
+		ie.setId(1);
+		importDataDao.registrarAll(calificaciones, periodoAcademico, ie, new Dcn());
 	}
 	
 	private void loadMetaData () {

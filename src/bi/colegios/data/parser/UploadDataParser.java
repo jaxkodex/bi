@@ -123,6 +123,7 @@ public class UploadDataParser {
 				getCalificacion(line, m);
 				count++;
 			}
+			Map<String, Consideraciones> tmpListConsideraciones = new HashMap<>();
 			while ((line = br.readLine()) != null && line.length() != 0) {
 				if (count_consideraciones == 1) { // Ignorar la primera linea
 					count_consideraciones++;
@@ -137,7 +138,15 @@ public class UploadDataParser {
 				consideracion.setDescripcion(descripcion);
 				consideracion.setId(codigo);
 				consideraciones.put(nivel+grado+seccion+area+codigo, consideracion);
+				tmpListConsideraciones.put(consideracion.getId(), consideracion);
 				count_consideraciones++;
+			}
+			for (Calificacion calificacion : calificaciones) {
+				calificacion.getConsideracion()
+				.setDescripcion(
+						tmpListConsideraciones
+						.get(calificacion
+								.getConsideracion().getId()).getDescripcion());
 			}
 			calificacionesMap.put(nivel+"_"+grado+"_"+seccion+"_"+area, calificaciones);
 		} catch (IOException e) {
