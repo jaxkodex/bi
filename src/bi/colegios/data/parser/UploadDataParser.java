@@ -9,10 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-
-import org.primefaces.model.UploadedFile;
 
 import bi.colegios.bean.ACargo;
 import bi.colegios.bean.Area;
@@ -23,7 +20,6 @@ import bi.colegios.bean.Estudiante;
 import bi.colegios.bean.Grado;
 import bi.colegios.bean.Matricula;
 import bi.colegios.bean.Nivel;
-import bi.colegios.bean.OfertaGrado;
 import bi.colegios.bean.PeriodoCalifica;
 import bi.colegios.bean.Persona;
 
@@ -114,7 +110,7 @@ public class UploadDataParser {
 			int count = 1, count_consideraciones = 1;
 			calificaciones = new ArrayList<Calificacion>();
 			while ((line = br.readLine()) != null && line.length() != 0) {
-				// Cogerá solo los datos de los alumnos
+				// Cogera solo los datos de los alumnos
 				if (count == 1) {
 					// ignorar la primera linea
 					count++;
@@ -189,20 +185,26 @@ public class UploadDataParser {
 		ACargo aCargo = new ACargo();
 		Ciclo ciclo = new Ciclo();
 		
+		nivel.setId(this.nivel.trim());
+		nivel.setDescripcion(this.nivel.trim());
+		
+		grado.setId(this.grado.trim());
+		grado.setDescripcion(this.grado.trim());
+		grado.setNivel(nivel);
+		
 		consideracion.setId(data[6].trim());
 		
 		periodoCalifica.setId(data[5]);
+		periodoCalifica.setDescripcion(data[5]);
 		
-		grado.setDescripcion(this.grado);
-		
+		area.setId(this.nivel+this.grado+this.area);
 		area.setDescripcion(this.area);
 		
 		area.setGrado(grado);
 		aCargo.setArea(area);
-		
-		nivel.setDescripcion(this.nivel);
-		
+		/*
 		ciclo.setNivel(nivel);
+		*/
 		
 		calificacion.setMatricula(m);
 		calificacion.setConsideracion(consideracion);

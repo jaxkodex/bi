@@ -17,7 +17,6 @@ import javax.servlet.ServletResponse;
 
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.transform.impl.AddInitTransformer;
 import org.springframework.stereotype.Component;
 
 import bi.colegios.bean.Cargo;

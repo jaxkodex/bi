@@ -12,7 +12,6 @@ import org.primefaces.model.UploadedFile;
 import org.springframework.stereotype.Controller;
 
 import bi.colegios.bean.Calificacion;
-import bi.colegios.data.parser.CalificacionPrimaria;
 import bi.colegios.data.parser.UploadDataParser;
 
 @Controller
@@ -118,7 +117,6 @@ public class CargaController {
 			columnas = new ArrayList<>();
 			columnaData = new ArrayList<>();
 			
-			int count = 1;
 			for (Calificacion calificacion : calificacionesPorArea) {
 				periodosCalificacion.put(calificacion.getPeriodoCalifica().getId(), 
 						calificacion.getPeriodoCalifica().getId());
@@ -139,7 +137,6 @@ public class CargaController {
 				nota.put(calificacion.getConsideracion().getId(), calificacion.getValor());
 				record.put(calificacion.getPeriodoCalifica().getId(), nota);
 				calificacionesHolder.put(calificacion.getMatricula().getEstudiante().getCodigo(), record);
-				count++;
 			}
 			columnas = new ArrayList<>();
 			columnas.add("N.");

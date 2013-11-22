@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import bi.colegios.bean.Cargo;
-import bi.colegios.bean.Ciclo;
 import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.InstitucionEducativa;
 import bi.colegios.bean.OfertaGrado;
