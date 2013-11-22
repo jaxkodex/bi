@@ -14,12 +14,15 @@ import java.util.zip.ZipInputStream;
 import bi.colegios.bean.ACargo;
 import bi.colegios.bean.Area;
 import bi.colegios.bean.Calificacion;
+import bi.colegios.bean.Cargo;
 import bi.colegios.bean.Ciclo;
 import bi.colegios.bean.Consideraciones;
+import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.Estudiante;
 import bi.colegios.bean.Grado;
 import bi.colegios.bean.Matricula;
 import bi.colegios.bean.Nivel;
+import bi.colegios.bean.OfertaGrado;
 import bi.colegios.bean.PeriodoCalifica;
 import bi.colegios.bean.Persona;
 
@@ -183,7 +186,11 @@ public class UploadDataParser {
 		Grado grado = new Grado();
 		Area area = new Area();
 		ACargo aCargo = new ACargo();
-		Ciclo ciclo = new Ciclo();
+		Desempenia desempenia = new Desempenia();
+		OfertaGrado ofertaGrado = new OfertaGrado();
+		Cargo cargo = new Cargo();
+		Persona persona = new Persona();
+		//Ciclo ciclo = new Ciclo();
 		
 		nivel.setId(this.nivel.trim());
 		nivel.setDescripcion(this.nivel.trim());
@@ -201,6 +208,18 @@ public class UploadDataParser {
 		area.setDescripcion(this.area);
 		
 		area.setGrado(grado);
+		
+		ofertaGrado.setGrado(grado);
+		ofertaGrado.setSeccion(this.seccion);
+		
+		cargo.setId("DOCENTE");
+		persona.setNombres("DOCENTE "+this.nivel.trim()+" "+this.grado.trim());
+		persona.setApellidos("DOCENTE "+this.nivel.trim()+" "+this.grado.trim());
+		desempenia.setCargo(cargo);
+		desempenia.setPersona(persona);
+		
+		aCargo.setDesempenia(desempenia);
+		aCargo.setOfertaGrado(ofertaGrado);
 		aCargo.setArea(area);
 		/*
 		ciclo.setNivel(nivel);

@@ -17,7 +17,7 @@ public class CargoDao {
 	@Resource(name="sessionFactory")
 	SessionFactory sessionFactory;
 	
-	public Cargo loadById (Integer id) {
+	public Cargo loadById (String id) {
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 		Cargo cargo = (Cargo) session.get(Cargo.class, id);

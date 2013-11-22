@@ -42,7 +42,7 @@ public class InstitucionEducativaDao {
 		return ie;
 	}
 	
-	public Cargo loadCargoById (Integer idCargo) {
+	public Cargo loadCargoById (String idCargo) {
 		if (idCargo == null) return null;
 		Cargo cargo = null;
 		Session session = sessionFactory.getCurrentSession();

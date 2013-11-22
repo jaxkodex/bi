@@ -14,16 +14,22 @@ import javax.persistence.Table;
 @Table(name="cargo")
 public class Cargo implements Serializable {
 	private static final long serialVersionUID = 1L;
+	/*
 	@Id
 	@GeneratedValue
 	@Column(name="id_cargo")
 	private Integer id;
+	*/
+	@Id
+	@Column(name="id_cargo")
+	private String id;
 	@Column(name="cargo_desc")
 	private String descripcion;
-	public Integer getId() {
+
+	public String getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getDescripcion() {
