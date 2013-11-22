@@ -15,7 +15,7 @@
 
      <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-   		<property name="url" value="jdbc:mysql://localhost/colegios" />
+   		<property name="url" value="jdbc:mysql://localhost/colegios_bi" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
     </bean>
@@ -25,7 +25,7 @@
 		<property name="configLocation">
 			<value>/WEB-INF/hibernate.cfg.xml</value>
 		</property>
-		<property name="packagesToScan" value="pe.gob.essalud.bi.bean" />
+		<property name="packagesToScan" value="bi.colegios.bean" />
 	</bean>
     <bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />

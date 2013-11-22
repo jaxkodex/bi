@@ -1,0 +1,48 @@
+<ui:composition template="/WEB-INF/template/main.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+		xmlns:ui="http://java.sun.com/jsf/facelets">
+		
+	<ui:define name="title">Administración</ui:define>
+	
+	<ui:define name="contenidos">
+		<p:panel header="CARGA DE DATOS">
+			<h:form id="carga_datos_form" enctype="multipart/form-data">
+				<h:panelGrid columns="2">
+					<h:outputText value="Seleccione su archivo" />
+					<p:fileUpload value="#{cargaController.file}" mode="simple" />
+				</h:panelGrid>
+				<p:commandButton value="Cargar" ajax="false"
+				actionListener="#{cargaController.carga}" />
+			</h:form>
+		</p:panel>
+		<br />
+		<h:form id="data_display">
+			<h:panelGrid columns="4">
+				<h:outputText value="Nivel:" />
+				<p:selectOneMenu id="nivel" value="#{cargaController.nivelSeleccionado}">
+					<f:selectItem itemLabel="Seleccione" itemValue="" />
+					<f:selectItems value="#{cargaController.nivelList}" />
+					<p:ajax update="grado" listener="#{cargaController.onNivelChangeHandler}" />
+				</p:selectOneMenu>
+				
+				<h:outputText value="Grado:" />
+				<p:selectOneMenu id="grado" value="#{cargaController.gradoSeleccionado}">
+					<f:selectItem itemLabel="Seleccione" itemValue="" />
+					<f:selectItems value="#{cargaController.gradosParaNivelSeleccionado}" />
+					<p:ajax update="area" listener="#{cargaController.onGradoChangeHandler}" />
+				</p:selectOneMenu>
+				
+				<h:outputText value="Area:" />
+				<p:selectOneMenu id="area">
+					<f:selectItem itemLabel="Seleccione" itemValue="" />
+					<f:selectItems value="#{cargaController.areasParaGradoSeleccionado}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

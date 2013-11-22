@@ -1,0 +1,256 @@
+<ui:composition template="/WEB-INF/template/main.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+		xmlns:ui="http://java.sun.com/jsf/facelets">
+		
+	<ui:define name="title">DCN</ui:define>
+	
+	<ui:define name="contenidos">
+	<p:tabView id="DCN">
+		<p:tab id="tab1" title="DCN">
+			<h:form id="dcn_form">
+				<p:panel header="Nuevo DCN">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="dcn_descripcion" value="Nombre" />
+						<p:inputText id="dcn_descripcion" required="true" value="#{dcnController.dcnNuevo.descripcion}">
+							<f:validateLength minimum="1" maximum="45" />
+						</p:inputText>
+						<p:message for="dcn_descripcion" />
+					</h:panelGrid>
+					<p:commandButton action="#{dcnController.registrarDcn}"
+					icon="ui-icon-plus"
+					value="Agregar" 
+					update=":DCN:dcn_form" />
+				</p:panel>
+				<br />
+				<p:dataTable id="dcn_list" var="dcn" value="#{dcnController.dcnList}">
+					<p:column headerText="DCN">
+						<h:outputText value="#{dcn.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+		
+		<p:tab id="tabNivel" title="Nivel">
+			<h:form id="nivel_form">
+				<p:panel header="Nuevo Nivel">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="dcn_id" value="DCN:" />
+						<p:selectOneMenu id="dcn_id" value="#{dcnController.idDcn}">
+							<f:selectItems value="#{dcnController.dcnList}" 
+							var="dcn"
+							itemValue="#{dcn.id}"
+							itemLabel="#{dcn.descripcion}" />
+						</p:selectOneMenu>
+						<p:message for="dcn_id" />
+						
+						<p:outputLabel for="nivel_descripcion" value="Nombre" />
+						<p:inputText id="nivel_descripcion" required="true" value="#{dcnController.nivelNuevo.descripcion}">
+							<f:validateLength minimum="1" maximum="45" />
+						</p:inputText>
+						<p:message for="nivel_descripcion" />
+					</h:panelGrid>
+					<p:commandButton action="#{dcnController.registrarNivel}"
+					icon="ui-icon-plus"
+					value="Agregar" 
+					update=":DCN:nivel_form" />
+				</p:panel>
+				<br />
+				<p:dataTable id="nivel_list" var="nivel" value="#{dcnController.nivelList}">
+					<p:column headerText="DCN">
+						<h:outputText value="#{nivel.dcn.descripcion}" />
+					</p:column>
+					<p:column headerText="NIVEL">
+						<h:outputText value="#{nivel.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+		
+		<p:tab id="tab2" title="Ciclos">
+			<h:form id="ciclo_form">
+				<p:panel header="Nuevo Ciclo">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="dcn_id" value="DCN:" />
+						<p:selectOneMenu id="dcn_id" value="#{dcnController.idDcnForCiclo}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.dcnList}" 
+							var="dcn"
+							itemValue="#{dcn.id}"
+							itemLabel="#{dcn.descripcion}" />
+							<p:ajax update="nivel_id" listener="#{dcnController.updateNivelListOnDcnChange}" />
+						</p:selectOneMenu>
+						<p:message for="dcn_id" />
+						
+						<p:outputLabel for="nivel_id" value="Nivel:" />
+						<p:selectOneMenu id="nivel_id" value="#{dcnController.idNivel}">
+							<f:selectItems value="#{dcnController.nivelListForCiclo}" 
+							var="nivel"
+							itemValue="#{nivel.id}"
+							itemLabel="#{nivel.descripcion}" />
+						</p:selectOneMenu>
+						<p:message for="nivel_id" />
+						
+						<p:outputLabel for="ciclo_descripcion" value="Nombre:" />
+						<p:inputText id="ciclo_descripcion" value="#{dcnController.cicloNuevo.descripcion}" />
+						<p:message for="ciclo_descripcion" />
+					</h:panelGrid>
+					<p:commandButton icon="ui-icon-plus" value="Agreagar"
+					update="ciclo_list" action="#{dcnController.registraCiclo}" />
+				</p:panel>
+				<br />
+				<p:dataTable id="ciclo_list" var="ciclo" value="#{dcnController.cicloList}">
+					<p:column headerText="DCN">
+						<h:outputText value="#{ciclo.nivel.dcn.descripcion}" />
+					</p:column>
+					<p:column headerText="NIVEL">
+						<h:outputText value="#{ciclo.nivel.descripcion}" />
+					</p:column>
+					<p:column headerText="CICLO">
+						<h:outputText value="#{ciclo.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+		
+		<p:tab id="tab3" title="Grados">
+			<h:form id="grado_form">
+				<p:panel header="Nuevo Grado">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="dcn_id" value="DCN:" />
+						<p:selectOneMenu id="dcn_id" value="#{dcnController.idDcnForGrado}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.dcnListForGrado}" 
+							var="dcn"
+							itemValue="#{dcn.id}"
+							itemLabel="#{dcn.descripcion}" />
+							<p:ajax update="nivel_id" listener="#{dcnController.updateNivelListOnDcnChangeForGrado}" />
+						</p:selectOneMenu>
+						<p:message for="dcn_id" />
+						
+						<p:outputLabel for="nivel_id" value="Nivel:" />
+						<p:selectOneMenu id="nivel_id" value="#{dcnController.idNivelForGrado}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.nivelListForGrado}" 
+							var="nivel"
+							itemValue="#{nivel.id}"
+							itemLabel="#{nivel.descripcion}" />
+							<p:ajax update="ciclo_id" listener="#{dcnController.updateCicloListOnDcnChange}" />
+						</p:selectOneMenu>
+						<p:message for="nivel_id" />
+						
+						<p:outputLabel for="ciclo_id" value="Ciclo:" />
+						<p:selectOneMenu id="ciclo_id" value="#{dcnController.idCicloForGrado}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.cicloListForGrado}" 
+							var="ciclo"
+							itemValue="#{ciclo.id}"
+							itemLabel="#{ciclo.descripcion}" />
+						</p:selectOneMenu>
+						<p:message for="ciclo_id" />
+						
+						<p:outputLabel for="ciclo_descripcion" value="Nombre:" />
+						<p:inputText id="ciclo_descripcion" value="#{dcnController.gradoNuevo.descripcion}" />
+						<p:message for="ciclo_descripcion" />
+					</h:panelGrid>
+					<p:commandButton icon="ui-icon-plus" value="Agreagar"
+					update="grado_list" action="#{dcnController.registraGrado}" />
+				</p:panel>
+				<br />
+				<p:dataTable id="grado_list" var="grado" value="#{dcnController.gradoList}">
+					<p:column headerText="DCN">
+						<h:outputText value="#{grado.ciclo.nivel.dcn.descripcion}" />
+					</p:column>
+					<p:column headerText="NIVEL">
+						<h:outputText value="#{grado.ciclo.nivel.descripcion}" />
+					</p:column>
+					<p:column headerText="CICLO">
+						<h:outputText value="#{grado.ciclo.descripcion}" />
+					</p:column>
+					<p:column headerText="GRADO">
+						<h:outputText value="#{grado.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+		
+		<p:tab id="tab4" title="Areas">
+			<h:form id="area_form">
+				<p:panel header="Nueva Area">
+					<h:panelGrid id="nueva_area" columns="3">
+						<p:outputLabel for="dcn_id" value="DCN:" />
+						<p:selectOneMenu id="dcn_id" value="#{dcnController.idDcnForArea}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.dcnListForArea}" 
+							var="dcn"
+							itemValue="#{dcn.id}"
+							itemLabel="#{dcn.descripcion}" />
+							<p:ajax update="nivel_id" listener="#{dcnController.updateDataForArea}" />
+						</p:selectOneMenu>
+						<p:message for="dcn_id" />
+						
+						<p:outputLabel for="nivel_id" value="Nivel:" />
+						<p:selectOneMenu id="nivel_id" value="#{dcnController.idNivelForArea}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.nivelListForArea}" 
+							var="nivel"
+							itemValue="#{nivel.id}"
+							itemLabel="#{nivel.descripcion}" />
+							<p:ajax update="ciclo_id" listener="#{dcnController.updateDataForArea}" />
+						</p:selectOneMenu>
+						<p:message for="nivel_id" />
+						
+						<p:outputLabel for="ciclo_id" value="Ciclo:" />
+						<p:selectOneMenu id="ciclo_id" value="#{dcnController.idCicloForArea}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.cicloListForArea}" 
+							var="ciclo"
+							itemValue="#{ciclo.id}"
+							itemLabel="#{ciclo.descripcion}" />
+							<p:ajax update="grado_id" listener="#{dcnController.updateDataForArea}" />
+						</p:selectOneMenu>
+						<p:message for="ciclo_id" />
+						
+						<p:outputLabel for="grado_id" value="Grado:" />
+						<p:selectOneMenu id="grado_id" value="#{dcnController.idGradoForArea}">
+							<f:selectItem itemLabel="Seleccione" itemValue="" />
+							<f:selectItems value="#{dcnController.gradoListForArea}" 
+							var="grado"
+							itemValue="#{grado.id}"
+							itemLabel="#{grado.descripcion}" />
+						</p:selectOneMenu>
+						<p:message for="grado_id" />
+						
+						<p:outputLabel for="area_descripcion" value="Nombre:" />
+						<p:inputText id="area_descripcion" value="#{dcnController.areaNueva.descripcion}" />
+						<p:message for="area_descripcion" />
+					</h:panelGrid>
+					<p:commandButton icon="ui-icon-plus" value="Agreagar"
+					update="grado_list,nueva_area" action="#{dcnController.registraArea}" />
+				</p:panel>
+				<br />
+				<p:dataTable id="grado_list" var="area" value="#{dcnController.areaList}">
+					<p:column headerText="DCN">
+						<h:outputText value="#{area.grado.ciclo.nivel.dcn.descripcion}" />
+					</p:column>
+					<p:column headerText="NIVEL">
+						<h:outputText value="#{area.grado.ciclo.nivel.descripcion}" />
+					</p:column>
+					<p:column headerText="CICLO">
+						<h:outputText value="#{area.grado.ciclo.descripcion}" />
+					</p:column>
+					<p:column headerText="GRADO">
+						<h:outputText value="#{area.grado.descripcion}" />
+					</p:column>
+					<p:column headerText="AREA">
+						<h:outputText value="#{area.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+	</p:tabView>
+	</ui:define>
+</ui:composition>

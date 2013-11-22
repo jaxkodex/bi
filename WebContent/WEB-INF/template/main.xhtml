@@ -7,7 +7,7 @@
 		xmlns:ui="http://java.sun.com/jsf/facelets">
 <h:head>
 	<meta charset="UTF-8" />
-	<title><ui:insert name="title">Err</ui:insert> | SABSIS</title>
+	<title><ui:insert name="title">Err</ui:insert> | Colegio BI</title>
 	
 </h:head>
 
@@ -22,27 +22,35 @@
 		</f:facet>
 	</p:ajaxStatus>
 	<div id="header">
-		SABSIS
+		<div style="position: absolute; top: 5px; left: 7px;">
+		Colegios BI
+		</div>
+		<div style="position: absolute; top: 5px; right: 7px;">
 		<h:form>
-			<h:outputText value="#{usuarioController.usuario.username}" />
+			<h:outputText value="#{usuarioController.usuarioSesion.username}" />
 		</h:form>
+		</div>
 	</div>
 	<div id="content">
 		<div id="menu">
 		<h:form>
 			<p:menu>
 				<p:menuitem value="Inicio" outcome="/index.xhtml" />
-				<p:submenu label="Convenio">
-					<p:menuitem value="Inicio" outcome="/convenio/index.xhtml" />
-					<p:menuitem value="Carga Masiva" action="#{convenioController.initMasivo}" />
-				</p:submenu>
-				<p:submenu label="Mi cuenta">
-					<p:menuitem value="Datos personales" />
-				</p:submenu>
 				<p:submenu label="Administracion">
-					<p:menuitem value="Centros Asistenciales" outcome="/admin/centro/index.xhtml" />
-					<p:menuitem value="Redes Asistenciales" outcome="/admin/red/index.xhtml" />
-					<p:menuitem value="Cuentas de usuario" outcome="/admin/usuario/index.xhtml" />
+					<p:menuitem value="La institucion" outcome="/ie/administracion/mi_ie.xhtml" />
+					<p:menuitem value="Plana docente" outcome="/ie/administracion/plana_docente.xhtml" />
+					<p:menuitem value="Carga de datos" outcome="/ie/administracion/carga_datos.xhtml" />
+				</p:submenu>
+				<p:submenu label="Administracion General">
+					<p:menuitem value="DCN" outcome="/admin/dcn/index.xhtml" />
+					<p:menuitem value="IEs" outcome="/admin/ie/index.xhtml" />
+					<p:menuitem value="Usuarios" outcome="/admin/usuario/index.xhtml" />
+				</p:submenu>
+				<p:submenu label="Analisis de datos">
+					<p:menuitem value="SAIKU" />
+				</p:submenu>
+				<p:submenu label="Usuario">
+					<p:menuitem value="Mi cuenta" url="/admin/usuario/" />
 					<p:menuitem value="Salir" url="/usuario/logout.xhtml" />
 				</p:submenu>
 			</p:menu>

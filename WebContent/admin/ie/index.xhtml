@@ -1,0 +1,54 @@
+<ui:composition template="/WEB-INF/template/main.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+		xmlns:ui="http://java.sun.com/jsf/facelets">
+		
+	<ui:define name="title">Instituciones educativas</ui:define>
+	
+	<ui:define name="contenidos">
+	<h:form id="ie">
+		<p:panel header="Registro de IE">
+			<h:panelGrid id="nueva_ie" columns="3">
+				<h:outputLabel for="ie_nombre" value="Nombre:" />
+				<p:inputText id="ie_nombre" maxlength="45" required="true" 
+				value="#{institucionEducativaController.nuevaInstitucionEducativa.nombre}">
+					<f:validateLength minimum="1" maximum="45" />
+				</p:inputText>
+				<p:message for="ie_nombre" />
+				
+				<h:outputLabel for="ie_direccion" value="Direccion:" />
+				<p:inputText id="ie_direccion" maxlength="45" required="true"
+				value="#{institucionEducativaController.nuevaInstitucionEducativa.direccion}">
+					<f:validateLength minimum="1" maximum="45" />
+				</p:inputText>
+				<p:message for="ie_direccion" />
+				
+				<h:outputLabel for="ie_codModular" value="Cosdigo Modular:" />
+				<p:inputText id="ie_codModular" maxlength="45" required="true"
+				value="#{institucionEducativaController.nuevaInstitucionEducativa.codigoModular}">
+					<f:validateLength minimum="1" maximum="45" />
+				</p:inputText>
+				<p:message for="ie_codModular" />
+			</h:panelGrid>
+			<p:commandButton icon="ui-icon-plus" value="Agregar"
+			action="#{institucionEducativaController.registrarInstitucionEducativa}"
+			update=":ie:nueva_ie,:ie:ie_list" />
+		</p:panel>
+		<br />
+		<p:dataTable id="ie_list" var="ie" value="#{institucionEducativaController.institucionEducativaList}">
+			<p:column headerText="NOMBRE">
+				<h:outputText value="#{ie.nombre}" />
+			</p:column>
+			<p:column headerText="DIRECCION">
+				<h:outputText value="#{ie.direccion}" />
+			</p:column>
+			<p:column headerText="COD. MODULAR">
+				<h:outputText value="#{ie.codigoModular}" />
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	</ui:define>
+</ui:composition>

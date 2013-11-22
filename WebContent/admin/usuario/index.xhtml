@@ -6,48 +6,104 @@
 		xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 		xmlns:ui="http://java.sun.com/jsf/facelets">
 		
-	<ui:define name="title">Usuarios</ui:define>
+	<ui:define name="title">Usuario</ui:define>
 	
 	<ui:define name="contenidos">
-		<h:form>
-			<p:toolbar>
-				<p:toolbarGroup align="left">
-					<p:commandButton icon="ui-icon-document" oncomplete="PF('newUserDialog').show()" />
-				</p:toolbarGroup>
-			</p:toolbar>
-		</h:form>
+	
+	<h:form id="usuarios">
+		<p:panel header="Nuevo Usuario">
+			<h:panelGrid columns="3">
+				<h:outputLabel for="u_nombres" value="Nombres:" />
+				<p:inputText id="u_nombres" 
+				value="#{usuarioController.usuarioNuevo.persona.nombres}" 
+				required="true"
+				maxlength="255">
+					<f:validateLength minimum="5" maximum="255" />
+				</p:inputText>
+				<p:message for="u_nombres" />
+				
+				<h:outputLabel for="u_apellidos" value="Apellidos:" />
+				<p:inputText id="u_apellidos" 
+				value="#{usuarioController.usuarioNuevo.persona.apellidos}" 
+				required="true"
+				maxlength="255">
+					<f:validateLength minimum="5" maximum="255" />
+				</p:inputText>
+				<p:message for="u_apellidos" />
+				
+				<h:outputLabel for="u_dni" value="DNI:" />
+				<p:inputText id="u_dni" value="#{usuarioController.usuarioNuevo.persona.dni}" 
+				required="true"
+				maxlength="8">
+					<f:validateLength minimum="8" maximum="8" />
+				</p:inputText>
+				<p:message for="u_dni" />
+				
+				<!--
+				<h:outputLabel value="Institucion Educativa:" />
+				<h:outputText id="ie_nombre" value="#{usuarioController.institucionEducativaSeleccionada.nombre}" />
+				<p:commandButton icon="ui-icon-search" oncomplete="PF('buscarIE').show()"
+				update=":busca_ie_dialog" />
+				-->
+				
+				<h:outputLabel for="u_usuario" value="Usuario:" />
+				<p:inputText id="u_usuario" 
+				value="#{usuarioController.usuarioNuevo.username}" 
+				required="true"
+				maxlength="12">
+					<f:validateLength minimum="5" maximum="12" />
+				</p:inputText>
+				<p:message for="u_usuario" />
+				
+				<h:outputLabel for="u_password" value="Contraseña:" />
+				<p:password id="u_password" 
+				value="#{usuarioController.usuarioNuevo.password}" 
+				required="true"
+				maxlength="12">
+					<f:validateLength minimum="5" maximum="12" />
+				</p:password>
+				<p:message for="u_password" />
+			</h:panelGrid>
+			<p:commandButton icon="ui-icon-plus"
+			value="Agregar"
+			update=":usuarios"
+			action="#{usuarioController.nuevoUsuario}" />
+		</p:panel>
 		<br />
-		<h:form id="form_usuarios">
-			<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-			<p:dataTable var="usuario" value="#{usuarioController.usuariosLazy}" paginator="true" rows="10" lazy="true">
-				<p:column headerText="Usuario">
-					<h:outputText value="#{usuario.username}" />
+		<p:dataTable var="usuario" value="#{usuarioController.usuariosList}">
+			<p:column headerText="NOMBRES">
+				<h:outputText value="#{usuario.persona.nombres}" />
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	
+	<p:dialog id="busca_ie_dialog" header="Buscar IE" modal="true" widgetVar="buscarIE" resizable="false"
+	width="600" height="500" closeOnEscape="true">
+		<h:form id="busca_ie">
+			<h:panelGrid columns="2">
+				<p:inputText id="query" value="#{institucionEducativaController.searchQuery}" />
+				<p:commandButton icon="ui-icon-search" action="#{institucionEducativaController.doSearch}"
+				update=":busca_ie_dialog" />
+			</h:panelGrid>
+			
+			<p:dataTable var="ie" value="#{institucionEducativaController.searchResults}">
+				<p:column headerText="COD. MODULAR">
+					<h:outputText value="#{ie.codigoModular}" />
 				</p:column>
-				<p:column style="width: 10px;">
-					<p:commandButton icon="ui-icon-search" oncomplete="PF('updateUserDialog').show()" update=":form_usuarios:update_user_dialog">
-						<f:setPropertyActionListener target="#{usuarioController.selectedUser}" value="#{usuario}" />
+				<p:column headerText="NOMBRE">
+					<h:outputText value="#{ie.nombre}" />
+				</p:column>
+				<p:column headerText="">
+					<p:commandButton
+					icon="ui-icon-ext" 
+					id="selectButton" update=":usuarios:ie_nombre">
+						<f:setPropertyActionListener value="#{ie}" 
+						target="#{usuarioController.institucionEducativaSeleccionada}" />
 					</p:commandButton>
 				</p:column>
 			</p:dataTable>
-			
-			<p:dialog header="Detalle de Usuario" widgetVar="updateUserDialog" modal="true" id="update_user_dialog">
-				<h:panelGrid columns="2">
-					<h:outputLabel>Username:</h:outputLabel>
-					<p:inputText id="update_username" value="#{usuarioController.selectedUser.username}" />
-					<h:outputLabel>Password:</h:outputLabel>
-					<p:password id="update_password" value="#{usuarioController.selectedUser.password}" />
-				</h:panelGrid>
-			</p:dialog>
-			
-			<p:dialog header="Nuevo Usuario" widgetVar="newUserDialog" modal="true">
-				<h:panelGrid columns="2">
-					<h:outputLabel>Username:</h:outputLabel>
-					<p:inputText id="new_username" value="#{usuarioController.newUser.username}" />
-					<h:outputLabel>Password:</h:outputLabel>
-					<p:password id="new_password" value="#{usuarioController.newUser.password}" />
-				</h:panelGrid>
-				<p:commandButton value="Registrar" actionListener="#{usuarioController.registerUser}" />
-			</p:dialog>
 		</h:form>
+	</p:dialog>
+	
 	</ui:define>
 </ui:composition>
