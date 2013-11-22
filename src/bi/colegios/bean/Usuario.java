@@ -100,23 +100,25 @@ public class Usuario implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
-		auth.add(new SimpleGrantedAuthority("USER_ROLE"));
+		for (Rol rol : roles) {
+			auth.add(new SimpleGrantedAuthority(rol.getId().trim()));
+		}
 		return auth;
 	}
 	@Override
 	public boolean isAccountNonExpired() {
-		return false;
+		return true;
 	}
 	@Override
 	public boolean isAccountNonLocked() {
-		return false;
+		return true;
 	}
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return false;
+		return true;
 	}
 	@Override
 	public boolean isEnabled() {
-		return false;
+		return true;
 	}
 }

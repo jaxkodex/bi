@@ -18,12 +18,8 @@
     </security:http>
     	
     <security:authentication-manager alias="am">
-    	<security:authentication-provider>
+    	<security:authentication-provider user-service-ref="userDetailsDao">
     		<security:password-encoder hash="md5" />
-    		<!-- security:jdbc-user-service data-source-ref="usuarioDao"/ -->
-    		<security:user-service>
-    			<security:user name="super_admin" authorities="SUPER_ADMIN, ROLE_USER" password="fe01ce2a7fbac8fafaed7c982a04e229"/>
-    		</security:user-service>
     	</security:authentication-provider>
     </security:authentication-manager>
     
