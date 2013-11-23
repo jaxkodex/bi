@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="periodo_academico")
 public class PeriodoAcademico implements Serializable {

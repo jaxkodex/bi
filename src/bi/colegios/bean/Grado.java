@@ -2,16 +2,13 @@ package bi.colegios.bean;
 
 import java.io.Serializable;
 
-import javax.faces.bean.ManagedBean;
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Entity;
 
-@ManagedBean
 @Entity
 @Table(name="grado")
 public class Grado implements Serializable {

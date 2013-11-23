@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="ie")
 public class InstitucionEducativa implements Serializable {
