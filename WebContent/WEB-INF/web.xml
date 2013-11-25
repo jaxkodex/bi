@@ -12,6 +12,11 @@
   <listener>
   	<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
   </listener>
+  <!-- 
+  <listener>
+  	<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+  </listener>
+   -->
   
   <context-param>
   	<param-name>javax.faces.PROJECT_STAGE</param-name>
@@ -21,6 +26,13 @@
   <context-param>
   	<param-name>primefaces.THEME</param-name>
   	<param-value>bootstrap</param-value>
+  </context-param>
+  
+  <context-param>
+  	<param-name>log4jConfigLocation</param-name>
+  	<param-value>
+  		/WEB-INF/log4j.properties
+  	</param-value>
   </context-param>
   
   <context-param>

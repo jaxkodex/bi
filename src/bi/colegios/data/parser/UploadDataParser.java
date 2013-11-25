@@ -66,9 +66,10 @@ public class UploadDataParser {
 				}
 			}
 			zis.close();
+			/*
 			for (String key : calificacionesMap.keySet()) {
 				System.out.format("%-50s%d\n", key, calificacionesMap.get(key).size());
-				/*
+				// --- Eliminado
 				for (Calificacion c																																			alificacion : calificacionesMap.get(key)) {
 					System.out.format("%s\t%s\t%s\t%s\n", calificacion.getMatricula().getEstudiante().getPersona().getApellidos(),
 							calificacion.getPeriodoCalifica().getId(),
@@ -76,8 +77,9 @@ public class UploadDataParser {
 							calificacion.getValor());
 				}
 				break;
-				*/
+				// --- Eliminado
 			}
+			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,8 +90,8 @@ public class UploadDataParser {
 		String filename = complete_name.substring(complete_name.lastIndexOf('/')+1,
 				complete_name.lastIndexOf('.'));
 		String[] parametros = filename.split("_");
-		System.out.println("Archivo: " + complete_name);
-		System.out.println(filename);
+		//System.out.println("Archivo: " + complete_name);
+		//System.out.println(filename);
 		//System.out.println("NIVEL: "+parametros[0]+" GRADO: "+parametros[1]+" SECCION: "+parametros[2]);
 		/*
 		System.out.format("NIVEL: %s GRADO: %s SECCION: %s AREA: %s\n", 
@@ -177,8 +179,12 @@ public class UploadDataParser {
 		e.setCodigo(data[1].trim());
 		e.setPersona(p);
 		
+		OfertaGrado ofertaGrado = new OfertaGrado();
+		ofertaGrado.setSeccion(seccion);
+		
 		m = new Matricula();
 		m.setEstudiante(e);
+		m.setOfertaGrado(ofertaGrado);
 		
 		estudiantes.put(e.getCodigo(), e);
 		matriculas.put(e.getCodigo(), m);

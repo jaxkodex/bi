@@ -72,12 +72,14 @@ public class CargaController {
 	}
 	
 	public void save () {
+		Dcn dcn = new Dcn();
+		dcn.setId(1);
 		PeriodoAcademico periodoAcademico = new PeriodoAcademico();
 		periodoAcademico.setId(2013);
 		periodoAcademico.setDescripcion("2013");
 		InstitucionEducativa ie = new InstitucionEducativa();
 		ie.setId(1);
-		importDataDao.registrarAll(calificaciones, periodoAcademico, ie, new Dcn());
+		importDataDao.registrarAll(calificaciones, periodoAcademico, ie, dcn);
 	}
 	
 	private void loadMetaData () {

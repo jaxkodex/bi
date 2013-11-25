@@ -20,6 +20,7 @@ public class Grado implements Serializable {
 	private Integer id;
 	*/
 	@Id
+	@Column(name="id_grado")
 	private String id;
 	@ManyToOne
 	@JoinColumn(name="id_nivel")
