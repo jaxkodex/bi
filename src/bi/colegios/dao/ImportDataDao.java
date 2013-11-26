@@ -148,7 +148,7 @@ public class ImportDataDao {
 		String consideracionId = calificacion.getConsideracion().getId();
 		calificacion.getConsideracion().setArea(calificacion.getaCargo().getArea());
 		calificacion.getConsideracion().setId(calificacion.getaCargo().getArea().getId()+
-				calificacion.getPeriodoCalifica().getId()+
+				//calificacion.getPeriodoCalifica().getId()+
 				consideracionId.substring(Math.max(consideracionId.length()-2, 0)));
 		
 		// Guardar/Recuperar Consideracion del Area
