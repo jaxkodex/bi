@@ -93,6 +93,8 @@ public class ImportDataDao {
 						periodoCalificaId.substring(Math.max(periodoCalificaId.length()-2, 0)));
 				guardaCalificacion(c, session);
 			}
+			session.flush();
+			session.clear();
 		}
 		session.getTransaction().commit();
 	}
@@ -133,37 +135,78 @@ public class ImportDataDao {
 	
 	private void guardaCalificacion (Calificacion calificacion, Session session) {
 		
+		// Set el DCN
 		calificacion.getaCargo().getArea().getGrado().getNivel().setDcn(dcn);
 
+		// Gurdar/Recuperar el Nivel
 		session.merge(calificacion.getaCargo().getArea().getGrado().getNivel());
+		// Guardar/Recuperar el Grado
 		session.merge(calificacion.getaCargo().getArea().getGrado());
+		// Guardar/Recuperar el area
 		session.merge(calificacion.getaCargo().getArea());
 		
 		String consideracionId = calificacion.getConsideracion().getId();
-		
 		calificacion.getConsideracion().setArea(calificacion.getaCargo().getArea());
 		calificacion.getConsideracion().setId(calificacion.getaCargo().getArea().getId()+
 				calificacion.getPeriodoCalifica().getId()+
 				consideracionId.substring(Math.max(consideracionId.length()-2, 0)));
 		
+		// Guardar/Recuperar Consideracion del Area
 		session.merge(calificacion.getConsideracion());
 		
 		calificacion.getPeriodoCalifica().setPeriodoAcademico(this.periodoAcademico);
+		// Guardar/Recuperar Periodo de Calificacion
 		session.merge(calificacion.getPeriodoCalifica());
 		
+		// Guardar/Recuperar la Oferta de Grado
 		OfertaGrado ofertaGrado = getOfertaGrado(session, 
 				calificacion.getaCargo().getArea().getGrado(), 
 				periodoAcademico, 
 				institucionEducativa,
 				calificacion.getMatricula().getOfertaGrado().getSeccion());
 		
+		// Guardar/Recuperar Estudiante
 		Estudiante estudiante = getEstudiante(session, calificacion.getMatricula().getEstudiante());
 		
+		// Guardar/Recuperar Matricula
 		calificacion.setMatricula(getMatricula(session, estudiante, ofertaGrado));
 		
+		// Guardar/Recuperar a_cargo -> Asignar el cargo a un docente(exista o no)
 		calificacion.setaCargo(getaCargo(session, ofertaGrado, 
 				calificacion.getaCargo().getArea(), 
 				calificacion.getaCargo().getDesempenia()));
+		
+		// Se ha guardado:
+		/**
+		 * 1. Nivel
+		 * 2. Grado
+		 * 3. Area
+		 * 4. Consideracion
+		 * 5. Periodo de Calificacion
+		 * 6. Oferta de grado
+		 * 7. Estudiante
+		 * 8. Matricula
+		 * 9. ACargo
+		 */
+		// FINALMENTE!!!!
+		
+		Criteria c = session.createCriteria(Calificacion.class);
+		c.createCriteria("consideracion").add(Restrictions.eq("id", calificacion.getConsideracion().getId()));
+		c.createCriteria("periodoCalifica").add(Restrictions.eq("id", calificacion.getPeriodoCalifica().getId()));
+		c.createCriteria("matricula").add(Restrictions.eq("id", calificacion.getMatricula().getId()));
+		c.createCriteria("aCargo").add(Restrictions.eq("id", calificacion.getaCargo().getId()));
+		c.setMaxResults(1).setFetchSize(1).setFirstResult(0);
+		Calificacion tmp = (Calificacion) c.uniqueResult();
+		
+		if (tmp == null) {
+			calificacion.setFecha(new Date());
+			session.saveOrUpdate(calificacion);
+		} else {
+			tmp.setValor(calificacion.getValor());
+			tmp.setFecha(new Date());
+			session.saveOrUpdate(tmp);
+			calificacion = tmp;
+		}
 	}
 	
 	private OfertaGrado getOfertaGrado (Session session, Grado grado, 
@@ -290,7 +333,10 @@ public class ImportDataDao {
 		c.setMaxResults(1).setFetchSize(1).setFirstResult(0);
 		aCargo = (ACargo) c.uniqueResult();
 		
-		if (aCargo != null) {
+		if (aCargo == null) {
+			aCargo = new ACargo();
+			aCargo.setArea(area);
+			aCargo.setOfertaGrado(ofertaGrado);
 			aCargo.setDesempenia(getDesempenia(session, desempenia));
 			session.merge(aCargo);
 		}
@@ -320,6 +366,7 @@ public class ImportDataDao {
 		if (tmpDesempenia == null) {
 			desempenia.setCargo(getCargo(session, "DOCENTE"));
 			desempenia.setPersona(getPersona(session, desempenia.getPersona()));
+			desempenia.setPeriodoAcademico(periodoAcademico);
 			session.saveOrUpdate(desempenia);
 			return desempenia;
 		}

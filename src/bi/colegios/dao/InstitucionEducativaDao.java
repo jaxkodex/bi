@@ -15,6 +15,7 @@ import bi.colegios.bean.Cargo;
 import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.InstitucionEducativa;
 import bi.colegios.bean.OfertaGrado;
+import bi.colegios.bean.PeriodoAcademico;
 
 @Repository
 @Transactional
@@ -126,5 +127,16 @@ public class InstitucionEducativaDao {
 		session.save(desempenia);
 		session.getTransaction().commit();
 		return true;
+	}
+
+	public void nuevoPeriodoAcademico(PeriodoAcademico periodoAcademico) {
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		PeriodoAcademico tmp = (PeriodoAcademico) session.get(PeriodoAcademico.class, periodoAcademico.getId());
+		if (tmp == null)
+			session.save(periodoAcademico);
+		else
+			periodoAcademico = tmp;
+		session.getTransaction().commit();
 	}
 }
