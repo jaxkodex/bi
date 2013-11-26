@@ -43,6 +43,11 @@ public class InstitucionEducativaController {
 	}
 	
 	public void nuevoCargo () {
+		String[] data = cargoNuevo.getDescripcion().split(" ");
+		if (data.length != 1) {
+			return;
+		}
+		cargoNuevo.setId(cargoNuevo.getDescripcion());
 		institucionEducativaDao.nuevoCargo(cargoNuevo);
 		cargoNuevo = new Cargo();
 	}

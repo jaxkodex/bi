@@ -3,20 +3,20 @@ package bi.colegios.bean;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.faces.bean.ManagedBean;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="calificacion")
 public class Calificacion implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
+	@GeneratedValue
 	@Column(name="id_calificacion")
 	private Integer id;
 	@ManyToOne

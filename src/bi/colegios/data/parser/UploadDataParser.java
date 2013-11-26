@@ -9,16 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-
-import org.primefaces.model.UploadedFile;
 
 import bi.colegios.bean.ACargo;
 import bi.colegios.bean.Area;
 import bi.colegios.bean.Calificacion;
+import bi.colegios.bean.Cargo;
 import bi.colegios.bean.Ciclo;
 import bi.colegios.bean.Consideraciones;
+import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.Estudiante;
 import bi.colegios.bean.Grado;
 import bi.colegios.bean.Matricula;
@@ -67,9 +66,10 @@ public class UploadDataParser {
 				}
 			}
 			zis.close();
+			/*
 			for (String key : calificacionesMap.keySet()) {
 				System.out.format("%-50s%d\n", key, calificacionesMap.get(key).size());
-				/*
+				// --- Eliminado
 				for (Calificacion c																																			alificacion : calificacionesMap.get(key)) {
 					System.out.format("%s\t%s\t%s\t%s\n", calificacion.getMatricula().getEstudiante().getPersona().getApellidos(),
 							calificacion.getPeriodoCalifica().getId(),
@@ -77,8 +77,9 @@ public class UploadDataParser {
 							calificacion.getValor());
 				}
 				break;
-				*/
+				// --- Eliminado
 			}
+			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -89,8 +90,8 @@ public class UploadDataParser {
 		String filename = complete_name.substring(complete_name.lastIndexOf('/')+1,
 				complete_name.lastIndexOf('.'));
 		String[] parametros = filename.split("_");
-		System.out.println("Archivo: " + complete_name);
-		System.out.println(filename);
+		//System.out.println("Archivo: " + complete_name);
+		//System.out.println(filename);
 		//System.out.println("NIVEL: "+parametros[0]+" GRADO: "+parametros[1]+" SECCION: "+parametros[2]);
 		/*
 		System.out.format("NIVEL: %s GRADO: %s SECCION: %s AREA: %s\n", 
@@ -114,7 +115,7 @@ public class UploadDataParser {
 			int count = 1, count_consideraciones = 1;
 			calificaciones = new ArrayList<Calificacion>();
 			while ((line = br.readLine()) != null && line.length() != 0) {
-				// Cogerá solo los datos de los alumnos
+				// Cogera solo los datos de los alumnos
 				if (count == 1) {
 					// ignorar la primera linea
 					count++;
@@ -124,6 +125,7 @@ public class UploadDataParser {
 				getCalificacion(line, m);
 				count++;
 			}
+			Map<String, Consideraciones> tmpListConsideraciones = new HashMap<>();
 			while ((line = br.readLine()) != null && line.length() != 0) {
 				if (count_consideraciones == 1) { // Ignorar la primera linea
 					count_consideraciones++;
@@ -138,7 +140,15 @@ public class UploadDataParser {
 				consideracion.setDescripcion(descripcion);
 				consideracion.setId(codigo);
 				consideraciones.put(nivel+grado+seccion+area+codigo, consideracion);
+				tmpListConsideraciones.put(consideracion.getId(), consideracion);
 				count_consideraciones++;
+			}
+			for (Calificacion calificacion : calificaciones) {
+				calificacion.getConsideracion()
+				.setDescripcion(
+						tmpListConsideraciones
+						.get(calificacion
+								.getConsideracion().getId()).getDescripcion());
 			}
 			calificacionesMap.put(nivel+"_"+grado+"_"+seccion+"_"+area, calificaciones);
 		} catch (IOException e) {
@@ -169,8 +179,12 @@ public class UploadDataParser {
 		e.setCodigo(data[1].trim());
 		e.setPersona(p);
 		
+		OfertaGrado ofertaGrado = new OfertaGrado();
+		ofertaGrado.setSeccion(seccion);
+		
 		m = new Matricula();
 		m.setEstudiante(e);
+		m.setOfertaGrado(ofertaGrado);
 		
 		estudiantes.put(e.getCodigo(), e);
 		matriculas.put(e.getCodigo(), m);
@@ -187,22 +201,44 @@ public class UploadDataParser {
 		Grado grado = new Grado();
 		Area area = new Area();
 		ACargo aCargo = new ACargo();
-		Ciclo ciclo = new Ciclo();
+		Desempenia desempenia = new Desempenia();
+		OfertaGrado ofertaGrado = new OfertaGrado();
+		Cargo cargo = new Cargo();
+		Persona persona = new Persona();
+		//Ciclo ciclo = new Ciclo();
+		
+		nivel.setId(this.nivel.trim());
+		nivel.setDescripcion(this.nivel.trim());
+		
+		grado.setId(this.grado.trim());
+		grado.setDescripcion(this.grado.trim());
+		grado.setNivel(nivel);
 		
 		consideracion.setId(data[6].trim());
 		
 		periodoCalifica.setId(data[5]);
+		periodoCalifica.setDescripcion(data[5]);
 		
-		grado.setDescripcion(this.grado);
-		
+		area.setId(this.nivel+this.grado+this.area);
 		area.setDescripcion(this.area);
 		
 		area.setGrado(grado);
+		
+		ofertaGrado.setGrado(grado);
+		ofertaGrado.setSeccion(this.seccion);
+		
+		cargo.setId("DOCENTE");
+		persona.setNombres("DOCENTE "+this.nivel.trim()+" "+this.grado.trim());
+		persona.setApellidos("DOCENTE "+this.nivel.trim()+" "+this.grado.trim());
+		desempenia.setCargo(cargo);
+		desempenia.setPersona(persona);
+		
+		aCargo.setDesempenia(desempenia);
+		aCargo.setOfertaGrado(ofertaGrado);
 		aCargo.setArea(area);
-		
-		nivel.setDescripcion(this.nivel);
-		
+		/*
 		ciclo.setNivel(nivel);
+		*/
 		
 		calificacion.setMatricula(m);
 		calificacion.setConsideracion(consideracion);

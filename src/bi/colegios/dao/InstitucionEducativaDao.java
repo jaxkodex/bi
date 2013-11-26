@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import bi.colegios.bean.Cargo;
-import bi.colegios.bean.Ciclo;
 import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.InstitucionEducativa;
 import bi.colegios.bean.OfertaGrado;
+import bi.colegios.bean.PeriodoAcademico;
 
 @Repository
 @Transactional
@@ -43,7 +43,7 @@ public class InstitucionEducativaDao {
 		return ie;
 	}
 	
-	public Cargo loadCargoById (Integer idCargo) {
+	public Cargo loadCargoById (String idCargo) {
 		if (idCargo == null) return null;
 		Cargo cargo = null;
 		Session session = sessionFactory.getCurrentSession();
@@ -127,5 +127,16 @@ public class InstitucionEducativaDao {
 		session.save(desempenia);
 		session.getTransaction().commit();
 		return true;
+	}
+
+	public void nuevoPeriodoAcademico(PeriodoAcademico periodoAcademico) {
+		Session session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		PeriodoAcademico tmp = (PeriodoAcademico) session.get(PeriodoAcademico.class, periodoAcademico.getId());
+		if (tmp == null)
+			session.save(periodoAcademico);
+		else
+			periodoAcademico = tmp;
+		session.getTransaction().commit();
 	}
 }

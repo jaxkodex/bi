@@ -9,10 +9,14 @@ import java.util.Map;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.UploadedFile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import bi.colegios.bean.Calificacion;
-import bi.colegios.data.parser.CalificacionPrimaria;
+import bi.colegios.bean.Dcn;
+import bi.colegios.bean.InstitucionEducativa;
+import bi.colegios.bean.PeriodoAcademico;
+import bi.colegios.dao.ImportDataDao;
 import bi.colegios.data.parser.UploadDataParser;
 
 @Controller
@@ -38,14 +42,20 @@ public class CargaController {
 	List<String[]> columnaData;
 	Map<String, String> periodosCalificacion;
 	Map<String, String> consideracionCalificacion;
+	Map<String, Map<String, String>> consideracionCalificacionIndex;
 	Map<String, String> estudiantes;
 	Map<String, Map<String, Map<String, Float>>> calificacionesHolder;
 	
-	public CargaController () {
+	ImportDataDao importDataDao;
+	
+	@Autowired
+	public CargaController (ImportDataDao importDataDao) {
 		calificaciones = new HashMap<>();
 		nivelList = new HashMap<>();
 		ofertaGradoList = new HashMap<>();
 		areaList = new HashMap<>();
+		
+		this.importDataDao = importDataDao;
 	}
 	
 	public void carga () {
@@ -59,6 +69,17 @@ public class CargaController {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void save () {
+		Dcn dcn = new Dcn();
+		dcn.setId(1);
+		PeriodoAcademico periodoAcademico = new PeriodoAcademico();
+		periodoAcademico.setId(2013);
+		periodoAcademico.setDescripcion("2013");
+		InstitucionEducativa ie = new InstitucionEducativa();
+		ie.setId(1);
+		importDataDao.registrarAll(calificaciones, periodoAcademico, ie, dcn);
 	}
 	
 	private void loadMetaData () {
@@ -117,16 +138,31 @@ public class CargaController {
 			calificacionesHolder = new HashMap<>();
 			columnas = new ArrayList<>();
 			columnaData = new ArrayList<>();
+			consideracionCalificacionIndex = new HashMap<>();
 			
-			int count = 1;
 			for (Calificacion calificacion : calificacionesPorArea) {
 				periodosCalificacion.put(calificacion.getPeriodoCalifica().getId(), 
 						calificacion.getPeriodoCalifica().getId());
 				estudiantes.put(calificacion.getMatricula().getEstudiante().getCodigo(), 
 						calificacion.getMatricula().getEstudiante().getPersona().getNombres()
 						+", "+calificacion.getMatricula().getEstudiante().getPersona().getApellidos());
-				consideracionCalificacion.put(calificacion.getConsideracion().getId(), 
+				/*
+				consideracionCalificacion.put(calificacion.getPeriodoCalifica().getId()+
+						calificacion.getConsideracion().getId(), 
 						calificacion.getConsideracion().getId());
+				*/
+				//consideracionCalificacionIndex.put(calificacion.getPeriodoCalifica().getId(), value)
+				
+				Map<String, String> tmpPeriodoCalifica = consideracionCalificacionIndex.get(calificacion.getPeriodoCalifica().getId());
+				
+				if (tmpPeriodoCalifica == null) {
+					tmpPeriodoCalifica = new HashMap<>();
+				}
+				tmpPeriodoCalifica.put(calificacion.getConsideracion().getId(), 
+						calificacion.getPeriodoCalifica().getId()+"-"+
+						calificacion.getConsideracion().getId());
+				consideracionCalificacionIndex.put(calificacion.getPeriodoCalifica().getId(), tmpPeriodoCalifica);
+				
 				Map<String, Map<String, Float>> record = calificacionesHolder.get(
 						calificacion.getMatricula().getEstudiante().getCodigo());
 				if (record == null) {
@@ -139,14 +175,20 @@ public class CargaController {
 				nota.put(calificacion.getConsideracion().getId(), calificacion.getValor());
 				record.put(calificacion.getPeriodoCalifica().getId(), nota);
 				calificacionesHolder.put(calificacion.getMatricula().getEstudiante().getCodigo(), record);
-				count++;
 			}
 			columnas = new ArrayList<>();
 			columnas.add("N.");
 			columnas.add("ESTUDIANTE");
+			/*
 			for (String keyPeriodo : periodosCalificacion.keySet()) {
 				for (String keyConsideracion : consideracionCalificacion.keySet()) {
 					columnas.add(keyConsideracion);
+				}
+			}
+			*/
+			for (String keyPeriodo : periodosCalificacion.keySet()) {
+				for (String keyConsideracion : consideracionCalificacionIndex.get(keyPeriodo).keySet()) {
+					columnas.add(keyPeriodo+" - "+keyConsideracion);
 				}
 			}
 			
@@ -156,11 +198,39 @@ public class CargaController {
 				data.add(studentCount+"");
 				data.add(estudiantes.get(keyReporteNotas));
 				Map<String, Map<String, Float>> record = calificacionesHolder.get(keyReporteNotas);
+				for (int i = 2; i < columnas.size(); i++) {
+					String[] ref = columnas.get(i).split("-");
+					Float val = record.get(ref[0].trim()).get(ref[1].trim());
+					if (nivel.equals("PRIMARIA")) {
+						int intVal = (val == null ? -1 : val.intValue());
+						switch (intVal) {
+						case 2:
+							data.add("A");
+							break;
+						case 1:
+							data.add("B");
+							break;
+						case 0:
+							data.add("C");
+							break;
+						default:
+							data.add("-");
+							break;
+						}
+					}else{
+						if (val != null)
+							data.add(String.format("%.2f", val));
+						else
+							data.add("-");
+					}
+				}
+				/*
 				for (String keyPeriodo : periodosCalificacion.keySet()) {
 					Map<String, Float> nota = record.get(keyPeriodo);
-					for (String keyConsideracion : consideracionCalificacion.keySet()) {
+					for (String keyConsideracion : consideracionCalificacionIndex.get(keyPeriodo).keySet()) {
 						if (nivel.equals("PRIMARIA")) {
-							switch (nota.get(keyConsideracion).intValue()) {
+							int val = (nota.get(keyConsideracion) == null ? -1 : nota.get(keyConsideracion).intValue());
+							switch (val) {
 							case 2:
 								data.add("A");
 								break;
@@ -179,6 +249,7 @@ public class CargaController {
 						}
 					}
 				}
+				*/
 				String[] d = new String[data.size()];
 				for (int i = 0; i < data.size(); i++) {
 					d[i] = data.get(i);

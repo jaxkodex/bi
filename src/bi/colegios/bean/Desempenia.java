@@ -3,7 +3,6 @@ package bi.colegios.bean;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.faces.bean.ManagedBean;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="desempenia")
 public class Desempenia implements Serializable {
@@ -27,9 +25,20 @@ public class Desempenia implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="id_persona")
 	private Persona persona;
+	@ManyToOne
+	@JoinColumn(name="id_pacademico")
+	private PeriodoAcademico periodoAcademico;
 	@Column(name="desemp_fecasigna")
 	private Date fechaAsignacion;
 	
+	public PeriodoAcademico getPeriodoAcademico() {
+		return periodoAcademico;
+	}
+
+	public void setPeriodoAcademico(PeriodoAcademico periodoAcademico) {
+		this.periodoAcademico = periodoAcademico;
+	}
+
 	public Integer getId() {
 		return id;
 	}

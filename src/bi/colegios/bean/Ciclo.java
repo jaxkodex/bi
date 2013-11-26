@@ -2,23 +2,14 @@ package bi.colegios.bean;
 
 import java.io.Serializable;
 
-import javax.faces.bean.ManagedBean;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+/*
 @ManagedBean
 @Entity
 @Table(name="ciclo")
+*/
 public class Ciclo implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	/*
 	@Id
 	@GeneratedValue
 	@Column(name="id_ciclo")
@@ -47,4 +38,5 @@ public class Ciclo implements Serializable {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+	*/
 }

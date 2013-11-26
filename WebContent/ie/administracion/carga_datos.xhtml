@@ -44,6 +44,9 @@
 				</p:selectOneMenu>
 			</h:panelGrid>
 			
+			<p:commandButton value="Guardar"
+			action="#{cargaController.save}" />
+			
 			<p:panel id="calificaciones" header="Calificaciones cargadas">
 				<p:dataTable id="calificacionesTable" var="notas" value="#{cargaController.columnaData}">
 					<p:columns var="col" value="#{cargaController.columnas}"

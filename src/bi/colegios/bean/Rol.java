@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="rol")
 public class Rol implements Serializable {

@@ -11,25 +11,29 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="area")
 public class Area implements Serializable {
 	private static final long serialVersionUID = 1L;
+	/*
 	@Id
 	@GeneratedValue
 	@Column(name="id_area")
 	private Integer id;
+	*/
+	@Id
+	@Column(name="id_area")
+	private String id;
 	@ManyToOne
 	@JoinColumn(name="id_grado")
 	private Grado grado;
 	@Column(name="area_descripcion")
 	private String descripcion;
-	
-	public Integer getId() {
+
+	public String getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public Grado getGrado() {

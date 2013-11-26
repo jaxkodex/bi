@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table(name="apoderado")
 public class Apoderado implements Serializable {

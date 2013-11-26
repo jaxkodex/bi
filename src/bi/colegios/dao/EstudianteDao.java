@@ -57,6 +57,6 @@ public class EstudianteDao {
 				.setFirstResult(first)
 				.list();
 		session.getTransaction().commit();
-		return null;
+		return estudiantes;
 	}
 }

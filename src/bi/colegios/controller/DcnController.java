@@ -3,7 +3,6 @@ package bi.colegios.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +85,7 @@ public class DcnController {
 	public void registraCiclo () {
 		Nivel nivel = dcnDao.loadNivelById (idNivel);
 		if (nivel != null) {
-			cicloNuevo.setNivel(nivel);
+			//cicloNuevo.setNivel(nivel);
 			dcnDao.nuevoCiclo(cicloNuevo);
 		}
 		cicloNuevo = new Ciclo();
@@ -95,7 +94,7 @@ public class DcnController {
 	public void registraGrado () {
 		Ciclo ciclo = dcnDao.loadCicloById (idCicloForGrado);
 		if (ciclo != null) {
-			gradoNuevo.setCiclo(ciclo);
+			//gradoNuevo.setCiclo(ciclo);
 			dcnDao.nuevoGrado(gradoNuevo);
 		}
 		gradoNuevo = new Grado();
