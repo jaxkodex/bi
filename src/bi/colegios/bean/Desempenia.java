@@ -25,9 +25,20 @@ public class Desempenia implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="id_persona")
 	private Persona persona;
+	@ManyToOne
+	@JoinColumn(name="id_pacademico")
+	private PeriodoAcademico periodoAcademico;
 	@Column(name="desemp_fecasigna")
 	private Date fechaAsignacion;
 	
+	public PeriodoAcademico getPeriodoAcademico() {
+		return periodoAcademico;
+	}
+
+	public void setPeriodoAcademico(PeriodoAcademico periodoAcademico) {
+		this.periodoAcademico = periodoAcademico;
+	}
+
 	public Integer getId() {
 		return id;
 	}

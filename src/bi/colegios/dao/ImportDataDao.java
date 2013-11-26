@@ -15,10 +15,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import bi.colegios.bean.ACargo;
 import bi.colegios.bean.Area;
 import bi.colegios.bean.Calificacion;
+import bi.colegios.bean.Cargo;
 import bi.colegios.bean.Consideraciones;
 import bi.colegios.bean.Dcn;
+import bi.colegios.bean.Desempenia;
 import bi.colegios.bean.Estudiante;
 import bi.colegios.bean.Grado;
 import bi.colegios.bean.InstitucionEducativa;
@@ -46,6 +49,9 @@ public class ImportDataDao {
 	private Map<String, Estudiante> estudiantes;
 	private Map<String, OfertaGrado> ofertaGrados;
 	private Map<String, Matricula> matriculas;
+	private Map<String, ACargo> aCargos;
+	private Map<String, Cargo> cargos;
+	private Map<String, Desempenia> desempenian;
 	
 	private Map<String, Nivel> niveles;
 	private Map<String, Grado> grados;
@@ -71,6 +77,9 @@ public class ImportDataDao {
 		estudiantes = new HashMap<>();
 		ofertaGrados = new HashMap<>();
 		matriculas = new HashMap<>();
+		aCargos = new HashMap<>();
+		cargos = new HashMap<>();
+		desempenian = new HashMap<>();
 		
 		Session session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
@@ -79,7 +88,9 @@ public class ImportDataDao {
 			List<Calificacion> calificacionesList = this.calificaciones.get(key);
 			for (Calificacion c : calificacionesList) {
 				c.getPeriodoCalifica().setPeriodoAcademico(this.periodoAcademico);
-				c.getPeriodoCalifica().setId(this.periodoAcademico.getId()+c.getPeriodoCalifica().getId());
+				String periodoCalificaId = c.getPeriodoCalifica().getId();
+				c.getPeriodoCalifica().setId(this.periodoAcademico.getId()+
+						periodoCalificaId.substring(Math.max(periodoCalificaId.length()-2, 0)));
 				guardaCalificacion(c, session);
 			}
 		}
@@ -128,10 +139,12 @@ public class ImportDataDao {
 		session.merge(calificacion.getaCargo().getArea().getGrado());
 		session.merge(calificacion.getaCargo().getArea());
 		
+		String consideracionId = calificacion.getConsideracion().getId();
+		
 		calificacion.getConsideracion().setArea(calificacion.getaCargo().getArea());
 		calificacion.getConsideracion().setId(calificacion.getaCargo().getArea().getId()+
 				calificacion.getPeriodoCalifica().getId()+
-				calificacion.getConsideracion().getId());
+				consideracionId.substring(Math.max(consideracionId.length()-2, 0)));
 		
 		session.merge(calificacion.getConsideracion());
 		
@@ -147,6 +160,10 @@ public class ImportDataDao {
 		Estudiante estudiante = getEstudiante(session, calificacion.getMatricula().getEstudiante());
 		
 		calificacion.setMatricula(getMatricula(session, estudiante, ofertaGrado));
+		
+		calificacion.setaCargo(getaCargo(session, ofertaGrado, 
+				calificacion.getaCargo().getArea(), 
+				calificacion.getaCargo().getDesempenia()));
 	}
 	
 	private OfertaGrado getOfertaGrado (Session session, Grado grado, 
@@ -259,5 +276,74 @@ public class ImportDataDao {
 		}
 		matriculas.put(""+estudiante.getId()+""+ofertaGrado.getId(), m);
 		return m;
+	}
+	
+	private ACargo getaCargo (Session session, OfertaGrado ofertaGrado, Area area, Desempenia desempenia) {
+		ACargo aCargo = aCargos.get(ofertaGrado.getId()+area.getId());
+		if (aCargo != null) {
+			return aCargo;
+		}
+		
+		Criteria c = session.createCriteria(ACargo.class);
+		c.createCriteria("ofertaGrado").add(Restrictions.eq("id", ofertaGrado.getId()));
+		c.createCriteria("area").add(Restrictions.eq("id", area.getId()));
+		c.setMaxResults(1).setFetchSize(1).setFirstResult(0);
+		aCargo = (ACargo) c.uniqueResult();
+		
+		if (aCargo != null) {
+			aCargo.setDesempenia(getDesempenia(session, desempenia));
+			session.merge(aCargo);
+		}
+		
+		aCargos.put(ofertaGrado.getId()+area.getId(), aCargo);
+		
+		return aCargo;
+	}
+	
+	private Desempenia getDesempenia (Session session, Desempenia desempenia) {
+		Persona persona =getPersona(session, desempenia.getPersona());
+		desempenia.setPersona(persona);
+		Desempenia tmpDesempenia = desempenian.get(periodoAcademico.getId()+
+				desempenia.getCargo().getId()+persona.getId());
+		
+		if (tmpDesempenia != null) {
+			return tmpDesempenia;
+		}
+		
+		Criteria c = session.createCriteria(Desempenia.class);
+		c.createCriteria("persona").add(Restrictions.eq("id", persona.getId()));
+		c.createCriteria("cargo").add(Restrictions.eq("id", desempenia.getCargo().getId()));
+		c.createCriteria("periodoAcademico").add(Restrictions.eq("id", periodoAcademico.getId()));
+		c.setMaxResults(1).setFetchSize(1).setFirstResult(0);
+		tmpDesempenia = (Desempenia) c.uniqueResult();
+		
+		if (tmpDesempenia == null) {
+			desempenia.setCargo(getCargo(session, "DOCENTE"));
+			desempenia.setPersona(getPersona(session, desempenia.getPersona()));
+			session.saveOrUpdate(desempenia);
+			return desempenia;
+		}
+		
+		return tmpDesempenia;
+	}
+
+	private Cargo getCargo(Session session, String idCargo) {
+		Cargo cargo = cargos.get(idCargo);
+		
+		if (cargo != null) {
+			return cargo;
+		}
+		
+		cargo = (Cargo) session.get(Cargo.class, idCargo);
+		
+		if (cargo == null) {
+			cargo = new Cargo ();
+			cargo.setId(idCargo);
+			cargo.setDescripcion(idCargo);
+			
+			session.saveOrUpdate(cargo);
+		}
+		
+		return cargo;
 	}
 }
