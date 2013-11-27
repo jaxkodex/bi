@@ -338,7 +338,7 @@ public class ImportDataDao {
 			aCargo.setArea(area);
 			aCargo.setOfertaGrado(ofertaGrado);
 			aCargo.setDesempenia(getDesempenia(session, desempenia));
-			session.merge(aCargo);
+			session.saveOrUpdate(aCargo);
 		}
 		
 		aCargos.put(ofertaGrado.getId()+area.getId(), aCargo);
